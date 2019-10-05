@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+	  <title>Spiff Bill Reminder</title>
+	  <link rel="stylesheet" type="text/css" href="billReminder.css">
+	</head>
+	<body>
+		<section>
+			<h1>Spiff Bill Reminder</h1>
+			<table>
+				<tr>
+					<th>
+						<h2>Add Bill</h2>  
+					</th>
+					<th>
+						<h2>Bill List</h2>
+
+						<p>There are 
+						<span id="bill-count">
+						  <!-- use JavaScript to count the number of bills, and show here -->
+						</span> 
+					bills left to pay.</p>
+					</th>
+				</tr>
+				<tr>
+					<th id="add-bill-col">
+						
+
+						<label for="bill-name">Bill Name</label><input id="bill-name" name="bill-name">
+						<br>
+						<label for="bill-date">Due Date</label><input id="bill-date" name="bill-date" type="date">
+						<br>
+						<label for="bill-amount">Bill Total</label><input id="bill-total" name="bill-total" type="number">
+						<br>
+						  
+					</th>
+					<th id=bill-list-col>
+						
+						
+
+						<ul id="bill-list">
+				
+						</ul>
+
+						
+					</th>
+				</tr>
+				<tr>
+					<th>
+						<button id="add-bill">Add Bill</button>  
+					</th>
+					<th>
+						<button id="remove-selected-bills">Remove selected bills</button>
+					</th>
+				</tr>
+			</table>
+		</section>
+		<script>
+			<!-- variable definition -->
+			let numberOfbills = 0
+			let billCount = document.querySelector("#bill-count")
+			let billList = document.querySelector("#bill-list")
+			let billName = document.querySelector("#bill-name")
+			let billDate = document.querySelector("#bill-date")
+			let billTotal = document.querySelector("#bill-total")
+			let addButt = document.querySelector("#add-bill")
+			let removeButt = document.querySelector("#remove-selected-bills")
+			billCount.innerHTML = numberOfbills <!-- makes the billCount start with the value of 0. -->
+			
+			addButt.addEventListener("click", function(){ <!-- defines what happens when the add button is clicked. Every time it's clicked it: -->
+				let listElement = document.createElement("li") <!-- creates a list item element and stores it in a variable. -->
+				listElement.classList.add("billListItem") <!-- gives that list item the class "billListItem" -->
+				listElement.addEventListener("click",function(){ <!-- gives that list item an event listener that:-->
+					if (listElement.classList.contains("selected")){ <!-- checks to see if the list item already has the class "selected" -->
+						listElement.classList.remove("selected") <!-- and if so, it removes that class. -->
+					}else{
+						listElement.classList.add("selected") <!--and if not, it adds that class -->
+					}
+				})
+				let billNameText = billName.value <!-- Next three lines are getting the values from the input fields and storing them in variables. -->
+				let billDateText = billDate.value
+				let billDateDate = new Date(billDateText)
+				let billTotalText = billTotal.value
+				if (billNameText !== "" && billDateText !== "" && (billDateDate.getTime() - Date.now()) > 0 && billTotalText >= 0) { <!-- making sure that everything was filled out correctly--!>
+					brBlock = "<br><blockquote>"
+					endBlock = "</blockquote>"
+					let newbillEntry = `${billNameText}, Date: ${billDateText}, Total: $${billTotalText} <br> <blockquote>Bill due in ${((billDateDate - Date.now())/(1000 * 3600 * 24)).toFixed(2)} days. </blockquote>`<!-- putting the string we want to print into a variable. -->
+					listElement.innerHTML = newbillEntry <!-- adding that string to the list item created above -->
+					billList.appendChild(listElement) <!-- adding that list item to the billList -->
+					billName.value = "" <!-- reset everything back to empty -->
+					billDate.value = ""
+					billTotal.value = ""
+					numberOfbills += 1 <!-- ups the bill counter. -->
+					billCount.innerHTML = numberOfbills <!-- recaculates what the billCount should be desplaying -->
+					if (((billDateDate.getTime() - Date.now())/(1000 * 3600 * 24))<=7){
+						alert("You have " + ((billDateDate - Date.now())/(1000 * 3600 * 24)).toFixed(2) + " days left to pay this bill.")
+					}
+				} else {
+					alert("Please make sure you've filled everything out.")
+				}
+			})
+			
+			removeButt.addEventListener("click", function removeElementsByClass(selected){ <!-- defines what to do if the remove button is clicked -->
+					let selectedItems = document.getElementsByClassName("selected") <!--creates a variable to store all the listItems with the selected class -->
+					while(selectedItems.length > 0){								<!-- basically: while there's still selected items -->
+						selectedItems[0].parentNode.removeChild(selectedItems[0]) <!-- delete a selected item -->
+					numberOfbills -= 1											<!-- subtract one from numberOfbills -->
+					}
+					billCount.innerHTML = numberOfbills					<!-- refresh billCount -->
+				})
+		</script>
+
+	</body>
+</html>
